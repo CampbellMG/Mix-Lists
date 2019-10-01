@@ -18,3 +18,4 @@ functions:
       - http:
           path: checklists
           method: get
+          cors: true
