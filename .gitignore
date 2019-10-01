@@ -5,6 +5,7 @@
 /.settings/
 .project
 .classpath
+/node_modules/
 
 # Package Files
 *.jar

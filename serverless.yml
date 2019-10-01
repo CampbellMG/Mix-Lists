@@ -11,6 +11,13 @@ provider:
 package:
   artifact: build/libs/mix-lists-dev-all.jar
 
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: mix-lists-view
+
 functions:
   mix-lists:
     handler: com.cmgcode.api.Checklist
