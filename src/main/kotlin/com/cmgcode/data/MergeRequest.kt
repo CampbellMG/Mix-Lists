@@ -1,5 +1,5 @@
 package com.cmgcode.data
 
-class MergeRequest (
+data class MergeRequest (
         var boardId: String? = null
 ): TrelloRequest()
