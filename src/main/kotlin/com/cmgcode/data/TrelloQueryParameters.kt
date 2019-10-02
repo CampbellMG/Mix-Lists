@@ -1,10 +1,10 @@
 package com.cmgcode.data
 
-open class TrelloRequest (
+open class TrelloQueryParameters (
     var apiKey: String? = null,
     var token: String? = null
 ) {
     override fun toString(): String {
-        return "TrelloRequest(apiKey=$apiKey, token$token)"
+        return "TrelloQueryParameters(apiKey=$apiKey, token$token)"
     }
 }

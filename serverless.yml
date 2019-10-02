@@ -19,10 +19,17 @@ custom:
     bucketName: mix-lists-view
 
 functions:
-  mix-lists:
-    handler: com.cmgcode.api.Checklist
+  checklists:
+    handler: com.cmgcode.api.ChecklistEndpoint
     events:
       - http:
           path: checklists
           method: get
+          cors: true
+  merge:
+    handler: com.cmgcode.api.MergeEndpoint
+    events:
+      - http:
+          path: merge
+          method: post
           cors: true
