@@ -19,7 +19,7 @@ class ApiGatewayResponse(
 
     class Builder {
         var statusCode: Int = 200
-        var headers: Map<String, String>? = Collections.emptyMap()
+        var headers: Map<String, String>? = CORS_HEADERS
         var rawBody: String? = null
         var objectBody: Response? = null
 
@@ -31,7 +31,7 @@ class ApiGatewayResponse(
                         headers
                 )
             } catch (e: JsonProcessingException) {
-                LOG.error("failed to serialize object", e)
+                LOG.error("Failed to serialize object: ", e)
                 throw RuntimeException(e)
             }
         }
@@ -40,6 +40,11 @@ class ApiGatewayResponse(
             val LOG: Logger by lazy {
                 LogManager.getLogger(Builder::class.java)
             }
+
+            val CORS_HEADERS = mapOf(
+                    "Access-Control-Allow-Origin" to "*",
+                    "Access-Control-Allow-Credentials" to "true"
+            )
         }
     }
 }
