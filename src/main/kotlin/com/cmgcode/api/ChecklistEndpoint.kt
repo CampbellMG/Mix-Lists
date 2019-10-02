@@ -20,9 +20,12 @@ class ChecklistEndpoint : TrelloEndpoint<ChecklistEndpoint.ChecklistQueryParamet
             val checklists = trello
                     .getBoardChecklists(boardId)
                     .map {
-                        (cards[it.idCard]?.name ?: "Unknown Card") to Checklist(it.id, it.name)
+                        Checklist(
+                                it.id,
+                                it.name,
+                                cards[it.idCard]?.name ?: "Unknown Card"
+                        )
                     }
-                    .toMap()
 
             ChecklistResponse(checklists)
         } ?: throw IllegalArgumentException("Missing board ID")
@@ -33,11 +36,12 @@ class ChecklistEndpoint : TrelloEndpoint<ChecklistEndpoint.ChecklistQueryParamet
     ) : TrelloQueryParameters()
 
     data class ChecklistResponse(
-            val checklists: Map<String, Checklist>
+            val checklists: List<Checklist>
     ) : Response()
 
     data class Checklist(
             val id: String,
-            val name: String
+            val name: String,
+            val cardName: String
     )
 }
