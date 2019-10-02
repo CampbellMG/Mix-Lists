@@ -1,10 +1,8 @@
 package com.cmgcode.api
 
-import com.cmgcode.data.ChecklistRequest
-import com.cmgcode.data.LambdaRequest
 import org.junit.Test
 
-class ChecklistTest {
+class ChecklistEndpointTest {
     @Test
     fun api() {
         val request = mapOf(
@@ -15,7 +13,7 @@ class ChecklistTest {
                 )
         )
 
-        val response = Checklist().handleRequest(request, null)
+        val response = ChecklistEndpoint().handleRequest(request, null)
         assert(response.body != null)
     }
 }
