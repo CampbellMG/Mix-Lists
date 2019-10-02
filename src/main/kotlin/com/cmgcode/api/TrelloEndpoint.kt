@@ -21,7 +21,7 @@ abstract class TrelloEndpoint<P : TrelloQueryParameters, B, R : Response>(
     override fun handleRequest(input: Map<String, Any>, context: Context?): ApiGatewayResponse {
         return try {
             val request = getLambdaRequest(input)
-            val body = ObjectMapper().readValue<B>(request.body, bodyClass)
+            val body = ObjectMapper().readValue<B>(request.body ?: "{}", bodyClass)
             request.queryStringParameters?.let {
                 safeLet(it.apiKey, it.token) { apiKey: String, token: String ->
                     val trello = TrelloImpl(apiKey, token, JDKTrelloHttpClient())

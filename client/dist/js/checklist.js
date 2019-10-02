@@ -1,56 +1,83 @@
 /* global TrelloPowerUp */
 
 var t = TrelloPowerUp.iframe();
+var trelloContext;
+
+window.estimate.addEventListener('submit', function (event) {
+    event.preventDefault();
+});
 
 function appendList() {
     var ul = window.selectedLists;
     var li = document.createElement("li");
-    li.appendChild(document.createTextNode(window.availableLists.value));
-    li.setAttribute("id", window.availableLists.value);
+    var selectedItem = window.availableLists;
+
+    li.appendChild(document.createTextNode(selectedItem.selectedOptions[0].text));
+    li.setAttribute("id", selectedItem.value);
     ul.appendChild(li);
 }
 
-window.estimate.addEventListener('submit', function (event) {
-    event.preventDefault();
-    console.log(window.list.getElementsByTagName("li"))
-});
+function createMergeList(){
+    var listItems = window.selectedLists.getElementsByTagName("li");
+    var listIds = [];
+
+    for(var i = 0; i < listItems.length; i++){
+        listIds.push(listItems[i].getAttribute('id'));
+    }
+
+    mergeChecklists(trelloContext.card, 'New List', listIds)
+}
 
 t.render(function () {
     t.sizeTo(document.body);
-    return t.board('all')
-        .then(function (board) {
-            httpGetAsync(
-                "https://tysz6ea8ki.execute-api.ap-southeast-2.amazonaws.com/dev/checklists?apiKey=6890595d33d989e3c7c373b127a68cb7&token=31568b46ca91bfd8779b12e9e5eb01daf2d6a7ae3255a76002448b0086634f59&boardId=" + board.id,
-                renderChecklists
-            )
-        })
+    trelloContext = t.getContext();
+    console.log(trelloContext);
+    loadChecklists(trelloContext.board)
 });
 
-function renderChecklists(checklists) {
-    checklists = JSON.parse(checklists);
-    var keys = Object.keys(checklists.checklists);
+function loadChecklists (boardId) {
+    httpAsync(
+        "https://tysz6ea8ki.execute-api.ap-southeast-2.amazonaws.com/dev/checklists?apiKey=&token=&boardId=" + boardId,
+        renderChecklists
+    )
+}
 
-    for (var i = 0; i < keys.length; i++) {
-        var group = document.createElement("optgroup");
-        group.setAttribute("label", keys[i]);
-
-        for (var j = 0; j < checklists.checklists[keys[i]].length; j++) {
-            var list = checklists.checklists[keys[i]][j];
-            var option = document.createElement("option");
-
-            option.appendChild(document.createTextNode(list));
-            option.setAttribute("value", list);
-
-            group.appendChild(option);
+function mergeChecklists(boardId, name, listIds){
+    httpAsync(
+        "https://tysz6ea8ki.execute-api.ap-southeast-2.amazonaws.com/dev/merge?apiKey=&token=",
+        function(){},
+        'POST',
+        {
+            destinationCardId: boardId,
+            title: name,
+            checklistIds: listIds
         }
+    )
+}
+
+function renderChecklists(checklistJSON) {
+    var checklistObject = JSON.parse(checklistJSON);
+    var checklists = checklistObject.checklists;
+
+    for (var i = 0; i < checklists.length; i++) {
+        var checklist = checklists[i];
+        var group = document.createElement("optgroup");
+        var option = document.createElement("option");
+
+        group.setAttribute("label", checklist.cardName);
+
+        option.appendChild(document.createTextNode(checklist.name));
+        option.setAttribute("value", checklist.id);
+
+        group.appendChild(option);
 
         window.availableLists.appendChild(group)
     }
 }
 
-function httpGetAsync(url, callback, method, body) {
+function httpAsync(url, callback, method, body) {
     method = typeof method !== 'undefined' ? method : 'GET';
-    body = typeof body !== 'undefined' ? body : null;
+    body = typeof body !== 'undefined' ? JSON.stringify(body) : null;
 
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function () {
